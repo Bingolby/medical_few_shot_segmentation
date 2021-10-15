@@ -258,6 +258,8 @@ def do_epoch(args: argparse.Namespace,
         images = images.to(dist.get_rank(), non_blocking=True)
         gt = gt.to(dist.get_rank(), non_blocking=True)
 
+        print("images:", images.shape)
+        print("gt:", gt.shape)
         loss = compute_loss(args=args,
                             model=model,
                             images=images,

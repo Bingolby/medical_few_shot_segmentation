@@ -42,8 +42,8 @@ class Classifier(object):
 
         # Computing prototypes
         fg_mask = (ds_gt_s == 1)
-        fg_prototype = (features_s * fg_mask).sum(dim=(1, 3, 4))
-        fg_prototype /= (fg_mask.sum(dim=(1, 3, 4)) + 1e-10)  # [n_task, c]
+        fg_prototype = (features_s * fg_mask.float()).sum(dim=(1, 3, 4))
+        fg_prototype /= (fg_mask.sum(dim=(1, 3, 4)).float() + 1e-10)  # [n_task, c]
         self.prototype = fg_prototype
 
         logits_q = self.get_logits(features_q)  # [n_tasks, shot, h, w]
@@ -105,8 +105,7 @@ class Classifier(object):
         assert (valid_pixels.sum(dim=(1, 2, 3, 4)) == 0).sum() == 0, valid_pixels.sum(dim=(1, 2, 3, 4))
 
         one_hot_gt_q = to_one_hot(ds_gt_q, self.num_classes)  # [n_tasks, shot, num_classes, h, w]
-
-        oracle_FB_param = (valid_pixels * one_hot_gt_q).sum(dim=(1, 3, 4)) / valid_pixels.sum(dim=(1, 3, 4))
+        oracle_FB_param = (valid_pixels.float() * one_hot_gt_q.float()).sum(dim=(1, 3, 4)) / valid_pixels.sum(dim=(1, 3, 4)).float()
 
         if self.FB_param_type == 'oracle':
             self.FB_param = oracle_FB_param
@@ -121,8 +120,8 @@ class Classifier(object):
         else:
             logits_q = self.get_logits(features_q)
             probas = self.get_probas(logits_q).detach()
-            self.FB_param = (valid_pixels * probas).sum(dim=(1, 3, 4))
-            self.FB_param /= valid_pixels.sum(dim=(1, 3, 4))
+            self.FB_param = (valid_pixels.float() * probas).sum(dim=(1, 3, 4))
+            self.FB_param /= valid_pixels.sum(dim=(1, 3, 4)).float()
 
         # Compute the relative error
         deltas = self.FB_param[:, 1] / oracle_FB_param[:, 1] - 1
@@ -179,9 +178,9 @@ class Classifier(object):
         updates :
              ce : Cross-Entropy between one_hot_gt and probas, shape [n_tasks,]
         """
-        ce = - ((valid_pixels.unsqueeze(2) * (one_hot_gt * torch.log(probas + 1e-10))).sum(2))  # [n_tasks, shot, h, w]
+        ce = - ((valid_pixels.float().unsqueeze(2) * (one_hot_gt * torch.log(probas + 1e-10))).sum(2))  # [n_tasks, shot, h, w]
         ce = ce.sum(dim=(1, 2, 3))  # [n_tasks]
-        ce /= valid_pixels.sum(dim=(1, 2, 3))
+        ce /= valid_pixels.sum(dim=(1, 2, 3)).float()
         if reduction == 'sum':
             ce = ce.sum(0)
         elif reduction == 'mean':
