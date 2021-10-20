@@ -17,6 +17,7 @@ deploy/
 pickle_files/
 beluga/
 data/*
+.vscode/*
 
 
 !.gitignore
