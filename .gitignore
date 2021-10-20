@@ -16,8 +16,7 @@ initmodel/
 deploy/
 pickle_files/
 beluga/
-data/pascal/*
-data/coco/*
+data/*
 
 
 !.gitignore
