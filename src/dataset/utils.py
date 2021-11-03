@@ -71,7 +71,7 @@ def process_image(line: str,
 
     '''
     line = line.strip()
-    line_split = line.split(' ')
+    line_split = line.split('\t')
     image_name = os.path.join(data_root, line_split[0])
     label_name = os.path.join(data_root, line_split[1])
     item: Tuple[str, str] = (image_name, label_name)

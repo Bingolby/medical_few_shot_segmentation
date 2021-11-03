@@ -105,6 +105,10 @@ classId2className = {'coco': {
                         18: 'sofa',
                         19: 'train',
                         20: 'tv'
+                        },
+                     'cervix2digestpath': {
+                        1: 'digestpath',
+                        2: 'cervix'
                         }
                      }
 
@@ -124,7 +128,7 @@ def get_split_classes(args: argparse.Namespace) -> Dict[str, Any]:
          split_classes : Dict.
                          split_classes['coco'][0]['train'] = training classes in fold 0 of Coco-20i
     """
-    split_classes = {'coco': defaultdict(dict), 'pascal': defaultdict(dict)}
+    split_classes = {'coco': defaultdict(dict), 'pascal': defaultdict(dict), 'cervix2digestpath': defaultdict(dict)}
 
     # =============== COCO ===================
     name = 'coco'
@@ -154,6 +158,14 @@ def get_split_classes(args: argparse.Namespace) -> Dict[str, Any]:
         split_classes[name][i]['val'] = val_list
         split_classes[name][i]['train'] = list(set(class_list) - set(val_list))
 
+    name = 'cervix2digestpath'
+    class_list = list(range(1, 3))
+    vals_lists = [list(range(1, 2)), list(range(2, 3))]
+    split_classes[name][-1]['val'] = class_list
+    for i, val_list in enumerate(vals_lists):
+        split_classes[name][i]['val'] = val_list
+        split_classes[name][i]['train'] = list(set(class_list) - set(val_list))
+
     return split_classes
 
 
@@ -166,8 +178,8 @@ def filter_classes(train_name: str,
         during  training (i.e in the train_name dataset) from the current list.
 
     inputs:
-        train_name : 'coco' or 'pascal'
-        test_name : 'coco' or 'pascal'
+        train_name : 'coco' or 'pascal' or 'cervix2digestpath'
+        test_name : 'coco' or 'pascal' or 'cervix2digestpath'
         train_split : In {0, 1, 2, 3}
         test_split : In {0, 1, 2, 3, -1}. -1 represents "all classes" (the one used in our experiments)
         split_classes: Dict of all classes used for each dataset and each split
