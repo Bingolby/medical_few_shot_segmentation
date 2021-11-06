@@ -22,7 +22,7 @@ DATA:
 
 TRAIN:
   ckpt_path: checkpoints/
-  batch_size: 6
+  batch_size: 12
   epochs: 100
   log_freq : 50
   visdom_port: -1
@@ -51,7 +51,7 @@ MODEL:
 
 EVALUATION:
   episodic_val: True
-  shot: 1
+  shot: 5
   random_shot: False
   norm_feat: True
   batch_size_val: 200
