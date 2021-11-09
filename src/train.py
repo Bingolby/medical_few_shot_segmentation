@@ -25,6 +25,9 @@ import argparse
 from typing import Tuple
 from .util import load_cfg_from_cfg_file, merge_cfg_from_list
 
+from apex import amp
+
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Training')
@@ -69,6 +72,7 @@ def main_worker(rank: int,
     optimizer = get_optimizer(args, params_list)
 
     model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
+    model, optimizer = amp.initialize(model, optimizer, opt_level="O1")
     model = DDP(model, device_ids=[rank])
 
     savedir = get_model_dir(args)
@@ -266,7 +270,9 @@ def do_epoch(args: argparse.Namespace,
                             )
 
         optimizer.zero_grad()
-        loss.backward()
+        # loss.backward()
+        with amp.scale_loss(loss, optimizer) as scaled_loss:
+            scaled_loss.backward()
         optimizer.step()
 
         if args.scheduler == 'cosine':
