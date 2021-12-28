@@ -72,7 +72,7 @@ def get_model_dir(args: argparse.Namespace) -> str:
                         args.train_name,
                         f'split={args.train_split}',
                         'model',
-                        f'pspnet_{args.arch}{args.layers}',
+                        f'deeplab_{args.arch}{args.layers}',
                         f'smoothing={args.smoothing}',
                         f'mixup={args.mixup}')
     return path

@@ -80,7 +80,7 @@ def get_val_loader(args: argparse.Namespace) -> torch.utils.data.DataLoader:
     # ===================== Build loader =====================
     if args.episodic_val:
         val_sampler = None
-        val_data = MedicalEpisodicData(transform=val_transform,
+        val_data = EpisodicData(transform=val_transform,
                                 class_list=class_list,
                                 data_list_path=args.val_list,
                                 args=args)

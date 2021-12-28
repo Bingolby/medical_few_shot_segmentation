@@ -120,8 +120,8 @@ class PSPNet(nn.Module):
         H = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
         W = int((x_size[3] - 1) / 8 * self.zoom_factor + 1)
 
-        x = self.extract_features(x)
-        x = self.classify(x, (H, W))
+        x = self.extract_features(x) #(53, 53)
+        x = self.classify(x, (H, W)) #(417, 417)
         return x
 
     def extract_features(self, x):

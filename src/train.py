@@ -8,7 +8,8 @@ import torch.nn.functional as F
 import torch.nn.parallel
 import torch.utils.data
 from visdom_logger import VisdomLogger
-from .model.pspnet import get_model
+# from .model.pspnet import get_model
+from .model.deeplab import get_model
 from .optimizer import get_optimizer, get_scheduler
 from .dataset.dataset import get_train_loader, get_val_loader
 from .util import intersectionAndUnionGPU, get_model_dir, AverageMeter, find_free_port
@@ -61,9 +62,10 @@ def main_worker(rank: int,
 
     # ========== Model + Optimizer ==========
     model = get_model(args).to(rank)
-    modules_ori = [model.layer0, model.layer1, model.layer2, model.layer3, model.layer4]
-    modules_new = [model.ppm, model.bottleneck, model.classifier]
-
+    # modules_ori = [model.layer0, model.layer1, model.layer2, model.layer3, model.layer4]
+    # modules_new = [model.ppm, model.bottleneck, model.classifier]
+    modules_ori = [model.backbone]
+    modules_new = [model.aspp, model.classifier]
     params_list = []
     for module in modules_ori:
         params_list.append(dict(params=module.parameters(), lr=args.lr))

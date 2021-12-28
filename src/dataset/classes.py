@@ -109,7 +109,12 @@ classId2className = {'coco': {
                      'cervix2digestpath': {
                         1: 'digestpath',
                         2: 'cervix'
-                        }
+                        },
+                     'fss_cervix':{
+                        1: 'cin1',
+                        2: 'cin2',
+                        3: 'cin3',
+                     }
                      }
 
 className2classId = defaultdict(dict)
@@ -128,7 +133,8 @@ def get_split_classes(args: argparse.Namespace) -> Dict[str, Any]:
          split_classes : Dict.
                          split_classes['coco'][0]['train'] = training classes in fold 0 of Coco-20i
     """
-    split_classes = {'coco': defaultdict(dict), 'pascal': defaultdict(dict), 'cervix2digestpath': defaultdict(dict)}
+    split_classes = {'coco': defaultdict(dict), 'pascal': defaultdict(dict)
+    , 'cervix2digestpath': defaultdict(dict), 'fss_cervix': defaultdict(dict)}
 
     # =============== COCO ===================
     name = 'coco'
@@ -166,6 +172,14 @@ def get_split_classes(args: argparse.Namespace) -> Dict[str, Any]:
         split_classes[name][i]['val'] = val_list
         split_classes[name][i]['train'] = list(set(class_list) - set(val_list))
 
+    name = 'fss_cervix'
+    class_list = list(range(1, 4))
+    vals_lists = [list(range(1, 2)), list(range(2, 3)), list(range(3, 4))]
+    split_classes[name][-1]['val'] = class_list
+    for i, val_list in enumerate(vals_lists):
+        split_classes[name][i]['val'] = val_list
+        split_classes[name][i]['train'] = list(set(class_list) - set(val_list))
+
     return split_classes
 
 
@@ -178,8 +192,8 @@ def filter_classes(train_name: str,
         during  training (i.e in the train_name dataset) from the current list.
 
     inputs:
-        train_name : 'coco' or 'pascal' or 'cervix2digestpath'
-        test_name : 'coco' or 'pascal' or 'cervix2digestpath'
+        train_name : 'coco' or 'pascal' or 'cervix2digestpath' or 'fss_cervix'
+        test_name : 'coco' or 'pascal' or 'cervix2digestpath' or 'fss_cervix'
         train_split : In {0, 1, 2, 3}
         test_split : In {0, 1, 2, 3, -1}. -1 represents "all classes" (the one used in our experiments)
         split_classes: Dict of all classes used for each dataset and each split

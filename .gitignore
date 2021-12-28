@@ -16,6 +16,7 @@ initmodel/
 deploy/
 pickle_files/
 beluga/
+data
 data/*
 .vscode/*
 
